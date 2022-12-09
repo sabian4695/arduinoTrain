@@ -25,6 +25,8 @@ void setup() {
 int forward;
 int reverse;
 
+// ****MAIN FUNCTIONS FOR RUNNING TRAIN ****//
+
 void trainDirection(bool directIP) {
   if (directIP == true) {forward = HIGH;} else {forward = LOW;}
   reverse = !forward;
@@ -39,28 +41,29 @@ void setTrain(float percentIP) {
   Serial.println("Percent Power: " + String(percentIP) + "%");
 }
 
+// ****MAIN ARDUINO LOOP ****//
 void loop() {
-  trainDirection(true);
-  //setTrain(convertPot());
-  
-  startStop(10,80,true);
-  myDelay(1000*10);
-  startStop(10,80,false);
-  myDelay(1000*10);
-  //Serial.println("print");
+  trainDirection(true);   //set direction to forward
+  startStop(10,70,true);  //0% to 70% power
+  myDelay(1000*30);       //stay at 70% power for 1 minute
+  startStop(10,80,false); //70% -> 0% power
+  myDelay(1000*30);    //stay at 0% power for 15 minutes
+  myDelay(1000*30);    //stay at 0% power for 15 minutes
+  myDelay(1000*30);    //stay at 0% power for 15 minutes
+  myDelay(1000*30);    //stay at 0% power for 15 minutes
 }
 
-float convertPot() {
+float convertPot() { //convert potentiometer reading to a percentage 0-1
   return 1-(analogRead(potIP)/1023);
 }
 
-void myDelay(int amount) {
-  long end_time = (millis()/50)+amount;
+void myDelay(long ms) { //manual delay, since built in delay is screwy upon changing the PWM frequency
+  long end_time = (millis()/50)+ms;
   do {//Serial.println("waiting");
    } while((millis()/50)<end_time);
 }
 
-void pixelPerc(float percent) {
+void pixelPerc(float percent) { //function for displaying train power % on a circular neopixel LED
   int pixelCount = percent*12;
   int red = percent*255;
   int green = 255-(percent*255);
